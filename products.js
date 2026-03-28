@@ -34,5 +34,14 @@ price: 15,
 rating: 4.0,
 color: "Yellow",
 image: "assets/images/toycar.jpg"   
+},
+{
+id: 5,
+name: "Mouse",
+category: "Computer",
+price: 10,
+rating: 5.0,
+color: "Black & Lighting",
+image: "assets/images/mouse.jpg"
 }
 ];
