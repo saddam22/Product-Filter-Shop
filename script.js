@@ -17,9 +17,9 @@ ratingFilter.addEventListener("change", filterProducts);
 function displayProducts(items){
     productContainer.innerHTML = items.map(p => `
         <div class="bg-white p-4 rounded shadow hover:shadow-lg transition">
-        <img src="${p.image}" alt="${p.name}" class="w-full h-40 object-cover mb-2 rounded" />
+        <img src="${p.image}" alt="${p.image}" class="w-full h-40 object-cover mb-2 rounded" />
         <h3 class="font-semibold">${p.name}</h3>
-        <p class="text-gray-600">${p.price}</p>
+        <p class="text-gray-600">${'$' + p.price}</p>
         <p class="text-yellow-500">${'★'.repeat(Math.floor(p.rating))}</p>
         </div>
         `).join("");
@@ -36,6 +36,7 @@ function filterProducts(){
         p.price <= maxPrice &&
         p.rating >= minRating;
     });
+
     displayProducts(filtered);
 }
 
