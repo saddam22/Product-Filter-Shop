@@ -75,6 +75,9 @@
                      <option value="priceHigh">Price: High → Low</option>
                      <option value="ratingHigh">Rating: High → Low</option>
                    </select>  
+
+                   <!--Active Filters Badges-->
+                   <div id="activeFilters" class="mt-4 space-x-2"></div>
             </div>
         </div>
 
@@ -83,6 +86,13 @@
             <!-- JS will inject product cards here -->
          </div>
       </div>
+
+      <!-- Cart/Wishlist Counter -->
+       <div class="fixed bottom-4 right-4 flex gap-4">
+         <button id="cartBtn" class="bg-blue-500 text-white px-4 py-2 rounded shadow">Cart (<span id="cartCount">0</span>)</button>
+         <button id="wishlistBtn" class="bg-pink-500 text-white px-4 py-2 rounded shadow">Wishlist(<span id="wishlistCount">0</span>)</button>
+       </div>
+
 
       <script src="products.js"></script>
       <script src="script.js"></script>
