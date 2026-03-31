@@ -10,6 +10,15 @@ const productContainer = document.getElementById("productContainer");
 const activeFilters = document.getElementById("activeFilters");
 const cartCount = document.getElementById("cartCount");
 const wishlistCount = document.getElementById("wishlistCount");
+const cartModal = document.getElementById("cartModal");
+const wishlistModal = document.getElementById("wishlistModal");
+const cartItems = document.getElementById("cartItems");
+const wishlistItems = document.getElementById("wishlistItems");
+const cartTotalSpan = document.getElementById("cartTotal");
+
+document.getElementById("cartBtn").addEventListener("click", openCart);
+document.getElementById("wishlistBtn").addEventListener("click", openWishlist);
+
 
 //localstorage setup
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -114,6 +123,92 @@ updateCounters();
 function updateCounters(){
 cartCount.textContent = cart.length;
 wishlistCount.textContent = wishlist.length;
+}
+
+
+//Modal Logic
+function openCart(){
+    displayCartItems();
+    cartModal.classList.remove("hidden");
+    cartModal.classList.add("flex");
+}
+function closeCart(){
+    cartModal.classList.add("hidden");
+    cartModal.classList.remove("flex");
+}
+function openWishlist(){
+    displayWishlistItems();
+    wishlistModal.classList.remove("hidden");
+    wishlistModal.classList.add("flex");
+}
+function closeWishlist(){
+wishlistModal.classList.add("hidden");
+wishlistModal.classList.remove("flex");   
+}
+
+// Display Cart Items
+function displayCartItems(){
+    if(cart.length === 0){
+        cartItems.innerHTML = `<p class="text-gray-500 text-center">Cart is empty</p>`;
+        cartTotalSpan.textContent = 0;
+        return
+    }
+
+    let total = 0;
+    cartItems.innerHTML = cart.map(id => {
+        const p = products.find(prod => prod.id === id);
+        total += p.price;
+        return `<div class="flex justify-between items-center border-b pb-1">
+        <span>${p.name} (${p.price})</span>
+        <button onclick="removeFromCart(${p.id})" class="text-red-500">✖</button>
+        </div>`;
+    }).join("");
+    cartTotalSpan.textContent = total;
+}
+
+// Remove from Cart
+function removeFromCart(id){
+    cart = cart.filter(i => i !== id);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCounters();
+    displayCartItems();
+}
+
+// Checkout Simulation
+function checkoutCart(){
+if(cart.length === 0){
+    alert("Cart is empty!");
+    return;
+}
+alert(`Checkout successful! Total: ${cart.reduce((acc, id) => acc+products.find(p=>p.id===id).price,0)}`);
+cart = [];
+localStorage.setItem("cart", JSON.stringify(cart));
+closeCart();
+updateCounters();
+displayCartItems();
+}
+
+// Display Wishlist Items
+function displayWishlistItems(){
+    if(wishlist.length === 0){
+        wishlistItems.innerHTML = `<p class="text-gray-500 text-center">Wishlist is empty</p>`;
+        return;
+    }
+    wishlistItems.innerHTML = wishlist.map(id =>{
+        const p = products.find(prod => prod.id === id);
+        return `<div class="flex justify-between items-center border-b pb-1">
+        <span>${p.name} (${p.price})</span>
+        <button onclick="removeFromWishlist(${p.id})" class="text-red-500">✖</button>
+        </div>`;
+    }).join("");
+}
+
+// Remove from Wishlist
+function removeFromWishlist(id){
+    wishlist = wishlist.filter(i => i !== id);
+    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+    updateCounters();
+    displayWishlistItems();
 }
 
 
