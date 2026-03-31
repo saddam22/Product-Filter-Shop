@@ -142,23 +142,26 @@ wishlistCount.textContent = wishlist.length;
 
 
 //Modal Logic
-function openCart(){
+function openCart() {
     displayCartItems();
     cartModal.classList.remove("hidden");
     cartModal.classList.add("flex");
 }
+
 function closeCart(){
     cartModal.classList.add("hidden");
     cartModal.classList.remove("flex");
 }
+
 function openWishlist(){
     displayWishlistItems();
     wishlistModal.classList.remove("hidden");
     wishlistModal.classList.add("flex");
 }
+
 function closeWishlist(){
-wishlistModal.classList.add("hidden");
-wishlistModal.classList.remove("flex");   
+    wishlistModal.classList.add("hidden");
+    wishlistModal.classList.remove("flex");   
 }
 
 // Display Cart Items
