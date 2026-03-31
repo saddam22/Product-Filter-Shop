@@ -1,9 +1,7 @@
 const categoryFilter = document.getElementById("categoryFilter");
 const priceFilter = document.getElementById("priceFilter");
 const ratingFilter = document.getElementById("ratingFilter");
-const colorFilter = document.getElementById("colorFilter");
-const sizeFilter = document.getElementById("sizeFilter");
-const searchInput = document.getElementById("searchInput")
+const searchInput = document.getElementById("searchInput");
 const sortFilter = document.getElementById("sortFilter");
 const priceValue = document.getElementById("priceValue");
 const productContainer = document.getElementById("productContainer");
@@ -33,7 +31,7 @@ priceFilter.addEventListener("input", () =>{
 });
 
 //add event Listeners
-[categoryFilter, ratingFilter, colorFilter, sizeFilter, searchInput, sortFilter].forEach(e1 =>{
+[categoryFilter, ratingFilter, searchInput, sortFilter].forEach(e1 =>{
 e1.addEventListener("change", filterProducts);
 e1.addEventListener("input", filterProducts);
 });
@@ -74,14 +72,25 @@ function lazyLoadImages(){
 }
 window.addEventListener("scroll", lazyLoadImages);
 
+// Collect multi-select values
+function getCheckedValues(className){
+    return Array.from(document.querySelectorAll(`.${className}:checked`)).map(cb => cb.value);
+}
+
 // Filter Function
 function filterProducts(){
+    const selectedColors = getCheckedValues("colorCheckbox");
+    const selectedSizes = getCheckedValues("sizeCheckbox");
+
     let filtered = products.filter(p => {
+        const colorMatch = selectedColors.length === 0 || selectedColors.includes(p.color);
+        const sizeMatch = selectedSizes.length === 0 || selectedSizes.includes(p.size);
+        
         return (categoryFilter.value === "all" || p.category === categoryFilter.value) &&
          p.price <= priceFilter.value &&
          p.rating >= ratingFilter.value &&
-         (colorFilter.value === "all" || p.color === colorFilter.value) &&
-         (sizeFilter.value === "all" || p.size === sizeFilter.value) &&
+         colorMatch &&
+         sizeMatch &&
          p.name.toLowerCase().includes(searchInput.value.toLowerCase());
     });
     
@@ -91,20 +100,26 @@ function filterProducts(){
     if(sortFilter.value === "ratingHigh") filtered.sort((a,b) => b.rating - a.rating);
 
     displayProducts(filtered);
+    displayActiveFilters(selectedColors, selectedSizes);
 }
 
-//active filters
-function displayActiveFilters(){
+// Display Active Filters for multi-select
+function displayActiveFilters(colors=[], sizes=[]){
     const filters = [];
     if(categoryFilter.value!=="all") filters.push(`Category: ${categoryFilter.value}`);
     if(priceFilter.value!=="200") filters.push(`Max Price: ${priceFilter.value}$`);
     if(ratingFilter.value!=="0") filters.push(`Rating: ${ratingFilter.value}+`);
-    if(colorFilter.value!=="all") filters.push(`Color: ${colorFilter.value}`);
-    if(sizeFilter.value!=="all") filters.push(`Size: ${sizeFilter.value}`);
+    colors.forEach(c => filters.push(`Color: ${c}`));
+    sizes.forEach(s => filters.push(`Size: ${s}`));
     if(searchInput.value) filters.push(`Search: "${searchInput.value}"`);
 
     activeFilters.innerHTML = filters.map(f => `<span class="bg-gray-200 px-2 py-1 rounded text-sm">${f}</span>`).join("");
 }
+
+// Add event listeners for multi-select checkboxes
+document.querySelectorAll(".colorCheckbox, .sizeCheckbox").forEach(cb => {
+    cb.addEventListener("change", filterProducts);
+});
 
 //cart & wishlish functions
 function addToCart(id){

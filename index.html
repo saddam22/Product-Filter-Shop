@@ -51,22 +51,26 @@
                 </select>
 
                 <!-- Color -->
-                 <select id="colorFilter" class="w-full border p-2 rounded mb-2">
-                  <option value="all">All Colors</option>
-                  <option value="Black">Black</option>
-                  <option value="Blue">Blue</option>
-                  <option value="Red">Red</option>
-                  <option value="Yellow">Yellow</option>
-                 </select>
+                <div>
+                    <h3 class="font-semibold mb-1">Color</h3>
+                  <div class="flex flex-wrap gap-2">
+                    <label><input type="checkbox" class="colorCheckbox" value="Black">Black</label>
+                    <label><input type="checkbox" class="colorCheckbox" value="Blue">Blue</label>
+                    <label><input type="checkbox" class="colorCheckbox" value="Red">Red</label>
+                    <label><input type="checkbox" class="colorCheckbox" value="Yellow">Yellow</label>
+                  </div>
+                </div>
 
                  <!-- Size -->
-                  <select id="sizeFilter" class="w-full border p-2 rounded mb-2">
-                    <option value="all">All Sizes</option> 
-                     <option value="Small">Small</option>
-                     <option value="M">M</option>
-                     <option value="L">L</option>
-                     <option value="One Size">One Size</option>
-                  </select>
+                 <div>
+                  <h3 class="font-semibold mb-1">Size</h3>
+                  <div class="flex flex-wrap gap-2">
+                    <label><input type="checkbox" class="sizeCheckbox" value="Small"> S</label>
+                    <label><input type="checkbox" class="sizeCheckbox" value="M"> M</label>
+                    <label><input type="checkbox" class="sizeCheckbox" value="L"> L</label>
+                    <label><input type="checkbox" class="sizeCheckbox" value="One Size"> One Size</label>
+                  </div>
+                </div>
 
                   <!-- Sort -->
                    <select id="sortFilter" class="w-full border p-2 rounded">
