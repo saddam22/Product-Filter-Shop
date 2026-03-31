@@ -83,15 +83,14 @@ function filterProducts(){
     const selectedSizes = getCheckedValues("sizeCheckbox");
 
     let filtered = products.filter(p => {
-        const colorMatch = selectedColors.length === 0 || selectedColors.includes(p.color);
-        const sizeMatch = selectedSizes.length === 0 || selectedSizes.includes(p.size);
-        
-        return (categoryFilter.value === "all" || p.category === categoryFilter.value) &&
-         p.price <= priceFilter.value &&
-         p.rating >= ratingFilter.value &&
-         colorMatch &&
-         sizeMatch &&
-         p.name.toLowerCase().includes(searchInput.value.toLowerCase());
+        const colorMatch = selectedColors.length === 0 || selectedColors.includes(p.color); // OR logic
+        const sizeMatch = selectedSizes.length === 0 || selectedSizes.includes(p.size); // OR logic
+        const searchMatch = p.name.toLowerCase().includes(searchInput.value.toLowerCase());
+        const categoryMatch = categoryFilter.value === "all" || p.category === categoryFilter.value;
+        const priceMatch = p.price <= Number(priceFilter.value);
+        const ratingMatch = p.rating >= Number(ratingFilter.value);
+
+        return categoryMatch && priceMatch && ratingMatch && colorMatch && sizeMatch && searchMatch // AND logic between criteria
     });
     
     //Sorting
@@ -176,12 +175,15 @@ function displayCartItems(){
     cartItems.innerHTML = cart.map(id => {
         const p = products.find(prod => prod.id === id);
         total += p.price;
-        return `<div class="flex justify-between items-center border-b pb-1">
+        return `<div class="flex justify-between items-center border-b pb-1" 
+        draggable="true" 
+        data-id="${p.id}">
         <span>${p.name} (${p.price})</span>
         <button onclick="removeFromCart(${p.id})" class="text-red-500">✖</button>
         </div>`;
     }).join("");
     cartTotalSpan.textContent = total;
+    enableDragAndDrop("cartItems", cart, displayCartItems);
 }
 
 // Remove from Cart
@@ -214,11 +216,14 @@ function displayWishlistItems(){
     }
     wishlistItems.innerHTML = wishlist.map(id =>{
         const p = products.find(prod => prod.id === id);
-        return `<div class="flex justify-between items-center border-b pb-1">
+        return `<div class="flex justify-between items-center border-b pb-1"
+        draggable="true"
+        data-id="${p.id}">
         <span>${p.name} (${p.price})</span>
         <button onclick="removeFromWishlist(${p.id})" class="text-red-500">✖</button>
         </div>`;
     }).join("");
+    enableDragAndDrop("wishlistItems", wishlist, displayWishlistItems);
 }
 
 // Remove from Wishlist
@@ -229,6 +234,64 @@ function removeFromWishlist(id){
     displayWishlistItems();
 }
 
+//drag and drop
+function enableDragAndDrop(containerId, arrayRef, updateFunc){
+    const container = document.getElementById(containerId);
+    let dragSrcE1 = null;
+
+    function handleDragStart(e){
+        dragSrcE1 = this;
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', this.innerHTML);
+    }
+
+    function handleDragOver(e){
+        if(e.preventDefault) 
+            e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        return false;
+    }
+
+    function handleDrop(e){
+        if(e.stopPropagation) e.stopPropagation();
+        if(dragSrcE1 != this){
+            const srcId = dragSrcE1.dataset.id;
+            const tgtId = this.dataset.id;
+            const srcIndex = arrayRef.indexOf(parseInt(srcId));
+            const tgtIndex = arrayRef.indexOf(parseInt(tgtId));
+            arrayRef.splice(srcIndex, 1);
+            arrayRef.splice(tgtIndex, 0, parseInt(srcId));
+            localStorage.setItem(
+                containerId === "cartItems" ? "cart" : "wishlist", 
+                JSON.stringify(arrayRef)
+            );
+            updateFunc();
+        }
+        this.classList.remove("bg-gray-200");   // ✅ add these
+        return false;
+    }
+
+    function addDnDHandlers(item){
+       item.addEventListener('dragstart', handleDragStart, false);
+       item.addEventListener('dragover', handleDragOver, false);
+       item.addEventListener('drop', handleDrop, false);
+      
+    // ✅ add these
+    item.addEventListener('dragenter', handleDragEnter, false);
+    item.addEventListener('dragleave', handleDragLeave, false);
+    }
+
+    Array.from(container.children).forEach(addDnDHandlers);
+}
+
+
+function handleDragEnter(){
+    this.classList.add("bg-gray-200");
+}
+function handleDragLeave(){
+    this.classList.remove("bg-gray-200");
+}
+
 
 //Initial load
-displayProducts(products);
+filterProducts();

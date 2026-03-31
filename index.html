@@ -101,7 +101,7 @@
         <div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
          <div class="bg-white w-96 rounded p-4 relative">
           <h2 class="text-lg font-bold mb-4">Cart</h2>
-          <div id="cartItems" class="space-y-2 max-h-64 overflow-y-auto"></div>
+          <div id="cartItems" class="space-y-2 max-h-64 overflow-y-auto drag-area"></div>
           <div class="mt-4 font-semibold">Total: $<span id="cartTotal">0</span></div>
           <div class="mt-4 flex justify-end gap-2">
             <button onclick="closeCart()" class="px-3 py-1 rounded bg-gray-300">Close</button>
@@ -115,7 +115,7 @@
       <div id="wishlistModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
       <div class="bg-white w-96 rounded p-4 relative">
         <h2 class="text-lg font-bold mb-4">Wishlist</h2>
-        <div id="wishlistItems" class="space-y-2 max-h-64 overflow-y-auto"></div>
+        <div id="wishlistItems" class="space-y-2 max-h-64 overflow-y-auto drag-area"></div>
         <div class="mt-4 flex justify-end gap-2">
         <button onclick="closeWishlist()" class="px-3 py-1 rounded bg-gray-300">Close</button>
         </div>
