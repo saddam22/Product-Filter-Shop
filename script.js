@@ -143,6 +143,11 @@ wishlistCount.textContent = wishlist.length;
 //Modal Logic
 function openCart() {
     displayCartItems();
+
+    setTimeout(() => {
+        enableDragAndDrop("cartItems", cart, displayCartItems);
+    }, 0);
+
     cartModal.classList.remove("hidden");
     cartModal.classList.add("flex");
 }
@@ -237,51 +242,60 @@ function removeFromWishlist(id){
 //drag and drop
 function enableDragAndDrop(containerId, arrayRef, updateFunc){
     const container = document.getElementById(containerId);
-    let dragSrcE1 = null;
+    let dragSrcEl = null;
 
     function handleDragStart(e){
-        dragSrcE1 = this;
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/html', this.innerHTML);
+        dragSrcEl = this;
+        this.classList.add("opacity-50");
+    }
+
+    function handleDragEnd(){
+        this.classList.remove("opacity-50");
     }
 
     function handleDragOver(e){
-        if(e.preventDefault) 
-            e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        return false;
+        e.preventDefault(); // MUST
     }
 
     function handleDrop(e){
-        if(e.stopPropagation) e.stopPropagation();
-        if(dragSrcE1 != this){
-            const srcId = dragSrcE1.dataset.id;
-            const tgtId = this.dataset.id;
-            const srcIndex = arrayRef.indexOf(parseInt(srcId));
-            const tgtIndex = arrayRef.indexOf(parseInt(tgtId));
+        e.preventDefault();
+
+        if(dragSrcEl !== this){
+            const srcId = parseInt(dragSrcEl.dataset.id);
+            const tgtId = parseInt(this.dataset.id);
+
+            const srcIndex = arrayRef.indexOf(srcId);
+            const tgtIndex = arrayRef.indexOf(tgtId);
+
+            // swap
             arrayRef.splice(srcIndex, 1);
-            arrayRef.splice(tgtIndex, 0, parseInt(srcId));
+            arrayRef.splice(tgtIndex, 0, srcId);
+
             localStorage.setItem(
-                containerId === "cartItems" ? "cart" : "wishlist", 
+                containerId === "cartItems" ? "cart" : "wishlist",
                 JSON.stringify(arrayRef)
             );
+
             updateFunc();
         }
-        this.classList.remove("bg-gray-200");   // ✅ add these
-        return false;
     }
 
-    function addDnDHandlers(item){
-       item.addEventListener('dragstart', handleDragStart, false);
-       item.addEventListener('dragover', handleDragOver, false);
-       item.addEventListener('drop', handleDrop, false);
-      
-    // ✅ add these
-    item.addEventListener('dragenter', handleDragEnter, false);
-    item.addEventListener('dragleave', handleDragLeave, false);
+    function handleDragEnter(){
+        this.classList.add("bg-gray-200");
     }
 
-    Array.from(container.children).forEach(addDnDHandlers);
+    function handleDragLeave(){
+        this.classList.remove("bg-gray-200");
+    }
+
+    Array.from(container.children).forEach(item => {
+        item.addEventListener("dragstart", handleDragStart);
+        item.addEventListener("dragend", handleDragEnd);
+        item.addEventListener("dragover", handleDragOver);
+        item.addEventListener("drop", handleDrop);
+        item.addEventListener("dragenter", handleDragEnter);
+        item.addEventListener("dragleave", handleDragLeave);
+    });
 }
 
 
